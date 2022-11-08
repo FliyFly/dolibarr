@@ -485,7 +485,7 @@ class StockTransferLine extends CommonObjectLine
 											 $code_inv);
 
 			if ($result < 0) {
-				setEventMessages($p->errors, $p->errorss, 'errors');
+				setEventMessages($p->errors, $p->errors, 'errors');
 				return 0;
 			}
 		} else {
