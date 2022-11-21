@@ -95,7 +95,7 @@ class ActionsDatapolicy
 		$error = 0; // Error counter
 
 		if (GETPOST('socid') && $parameters['currentcontext'] == 'thirdpartycard' && !empty($object)) {
-			$object->fetch(GETPOST('socid'));
+			$object->fetch_user(GETPOST('socid'));
 		}
 
 		// FIXME Removed hard coded id, use codes
