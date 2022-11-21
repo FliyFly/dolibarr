@@ -107,7 +107,7 @@ if ($action == 'add_payment') {
 			// Create a line of payments
 			$payment = new PaymentExpenseReport($db);
 			$payment->fk_expensereport = $expensereport->id;
-			$payment->datepaid       = $datepaid;
+			$payment->datep          = $datep;
 			$payment->amounts        = $amounts; // Tableau de montant
 			$payment->total          = $total;
 			$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
