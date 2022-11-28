@@ -332,7 +332,7 @@ if ($action == 'create') {
 		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ?GETPOST('contractid') : $object->fk_contract;
+			$contractid = GETPOST('contractid') ?GETPOST('contractid') : $object->fk_contrat;
 			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
 			print "</td></tr>";
 		}
