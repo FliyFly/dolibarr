@@ -643,7 +643,6 @@ class Export
 			// Open file
 			dol_mkdir($dirname);
 			$result = $objmodel->open_file($dirname."/".$filename, $outputlangs);
-
 			if ($result >= 0) {
 				// Genere en-tete
 				$objmodel->write_header($outputlangs);

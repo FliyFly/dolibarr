@@ -64,7 +64,6 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 			while (($file = readdir($handle)) !== false) {
 				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg)) {
 					$moduleid = $reg[1];
-
 					// Loading Class
 					$file = $dir."export_".$moduleid.".modules.php";
 					$classname = "Export".ucfirst($moduleid);

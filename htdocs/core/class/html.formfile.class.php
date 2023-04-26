@@ -704,6 +704,11 @@ class FormFile
 
 			$out .= '<tr class="liste_titre">';
 
+
+			$addcolumforpicto = ($delallowed || $printer || $morepicto);
+			$colspan = (4 + ($addcolumforpicto ? 1 : 0));
+			$colspanmore = 0;
+
 			$out .= '<th colspan="'.$colspan.'" class="formdoc liste_titre maxwidthonsmartphone center">';
 
 			// Model
@@ -718,7 +723,8 @@ class FormFile
 				if ($conf->browser->layout == 'phone') {
 					$morecss = 'maxwidth100';
 				}
-				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0);
+				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1, '', 0, 0, "inputSeparator");
 				if ($conf->use_javascript_ajax) {
 					$out .= ajax_combobox('model');
 				}
@@ -765,7 +771,7 @@ class FormFile
 				foreach ($hookmanager->hooks['formfile'] as $module) {
 					if (method_exists($module, 'formBuilddocLineOptions')) {
 						$colspanmore++;
-						$out .= '<th></th>';
+						$out .= '<th>';
 					}
 				}
 			}
