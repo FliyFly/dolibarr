@@ -161,8 +161,8 @@ function getDolUserInt($key, $default = 0, $tmpuser = null)
 /**
  * Is Dolibarr module enabled
  *
- * @param string $module module name to check
- * @return int
+ * @param 	string 	$module 	Module name to check
+ * @return 	boolean				True if module is enabled
  */
 function isModEnabled($module)
 {
@@ -1447,13 +1447,17 @@ function dol_string_unaccent($str)
  * 	@param	string			$newstr				String to replace forbidden chars with
  *  @param  array|string	$badcharstoreplace  Array of forbidden characters to replace. Use '' to keep default list.
  *  @param  array|string	$badcharstoremove   Array of forbidden characters to remove. Use '' to keep default list.
+ *  @param	int				$keepspaces			1=Do not treat space as a special char to replace or remove
  * 	@return string          					Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nounprintableascii()
  */
-function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '')
+function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $badcharstoremove = '', $keepspaces = 0)
 {
-	$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°', '$', ';'); // more complete than dol_sanitizeFileName
+	$forbidden_chars_to_replace = array("'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ",", ";", "=", '°', '$', ';'); // more complete than dol_sanitizeFileName
+	if (empty($keepspaces)) {
+		$forbidden_chars_to_replace[] = " ";
+	}
 	$forbidden_chars_to_remove = array();
 	//$forbidden_chars_to_remove=array("(",")");
 
@@ -6220,7 +6224,7 @@ function isOnlyOneLocalTax($local)
  * Get values of localtaxes (1 or 2) for company country for the common vat with the highest value
  *
  * @param	int				$local 		LocalTax to get
- * @return	string						Values of localtax (Can be '20', '-19:-15:-9')
+ * @return	string						Values of localtax (Can be '20', '-19:-15:-9') or 'Error'
  */
 function get_localtax_by_third($local)
 {
@@ -6237,12 +6241,14 @@ function get_localtax_by_third($local)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
-		return $obj->localtax;
-	} else {
-		return 'Error';
+		if ($obj) {
+			return $obj->localtax;
+		} else {
+			return '0';
+		}
 	}
 
-	return '0';
+	return 'Error';
 }
 
 
@@ -7296,15 +7302,16 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 		do {
 			$oldstringtoclean = $out;
 
+			libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
+
 			if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
 				try {
 					$dom = new DOMDocument;
 					// Add a trick to solve pb with text without parent tag
-					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up without the trick into '<h1>Foo<p>bar</p></h1>'
-					// like 'abc' that wrongly ends up without the tric into with '<p>abc</p>'
+					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
+					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 					$out = '<div class="tricktoremove">'.$out.'</div>';
-
-					$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD|LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text without parent tag
@@ -11355,6 +11362,9 @@ function getElementProperties($element_type)
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$subelement = 'adherent';
+	} elseif ($element_type == 'usergroup') {
+		$classpath = 'user/class';
+		$module = 'user';
 	} elseif ($element_type == 'mo') {
 		$classpath = 'mrp/class';
 		$classfile = 'mo';
@@ -11789,7 +11799,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$error = '')
 	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 	if (preg_match('/[^\(\)]/', $t)) {
-		$error = 'Bad syntax of the search string, filter criteria is inhalited';
+		$error = 'Bad syntax of the search string, filter criteria is invalidated';
 		return 'Filter syntax error';		// Bad syntax of the search string, we force a SQL not found
 	}
 

@@ -116,8 +116,22 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int ID
+	 * @deprecated
+	 * @see $fk_user_author
+	 */
+	public $user_author;
+
+	/**
+	 * @var int ID
 	 */
 	public $fk_user_author;
+
+	/**
+	 * @var int ID
+	 * @deprecated
+	 * @see $fk_user_valid
+	 */
+	public $user_valid;
 
 	/**
 	 * @var int ID
@@ -126,9 +140,15 @@ class Facture extends CommonInvoice
 
 	/**
 	 * @var int ID
+	 * @deprecated
+	 * @see $fk_uesr_modif
+	 */
+	public $user_modification;
+
+	/**
+	 * @var int ID
 	 */
 	public $fk_user_modif;
-
 
 	public $date; // Date invoice
 	public $datem;
@@ -156,9 +176,6 @@ class Facture extends CommonInvoice
 	 * @var string customer ref
 	 */
 	public $ref_customer;
-
-	//Check constants for types
-	public $type = self::TYPE_STANDARD;
 
 	// Warning: Do not set default value into property defintion. it must stay null.
 	// For example to avoid to have substition done when object is generic and not yet defined.
@@ -280,6 +297,7 @@ class Facture extends CommonInvoice
 	 * @var int Code in llx_c_paiement
 	 */
 	public $retained_warranty_fk_cond_reglement;
+
 
 
 	/**
@@ -472,7 +490,9 @@ class Facture extends CommonInvoice
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;
 		}
+
 		$this->ref_client = trim($this->ref_client);
+
 		$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
 		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note_private));
 		$this->note_public = trim($this->note_public);
@@ -1487,7 +1507,7 @@ class Facture extends CommonInvoice
 	 *
 	 *  @param      Object			$object         	Object source
 	 *  @param		User			$user				Object user
-	 * 	@param		Array(int)		$lines				Ids of lines to use for invoice. If empty, all lines will be used.
+	 * 	@param		array			$lines				Ids of lines to use for invoice. If empty, all lines will be used.
 	 *  @return     int             					<0 if KO, 0 if nothing done, 1 if OK
 	 */
 	public function createFromContract($object, User $user, $lines = array())
