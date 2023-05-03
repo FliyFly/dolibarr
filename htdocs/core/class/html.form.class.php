@@ -8278,8 +8278,8 @@ class Form
 			}
 		} elseif ($input == "inputSeparator") {
 			$out .= '<label for="delimiter">Delimiter:</label>';
-			$out .= '<input type="radio" class="testinput" name="delimiter" value="comma" id="comma-radio" checked><label for="comma-radio">,</label>';
-			$out .= '<input type="radio" class="testinput" name="delimiter" value="semicolon" id="semicolon-radio"><label for="semicolon-radio">;</label>';
+			$out .= '<input type="radio" class="testinput" name="delimiter" value="comma" id="comma" checked><label for="comma">,</label>';
+			$out .= '<input type="radio" class="testinput" name="delimiter" value="semicolon" id="semicolon"><label for="semicolon">;</label>';
 
 			$out .= '<script>
 			jQuery(document).ready(function() {
@@ -8291,6 +8291,12 @@ class Form
 						$("input.testinput").prop("disabled", false);
 					}
 				});
+				var separator = "' . $conf->global->EXPORT_CSV_SEPARATOR_TO_USE .'";
+				if(separator == ";") {
+					$("#semicolon").prop("checked", true);
+				  } else {
+					$("#comma").prop("checked", true);
+				  }
 			});
 			</script>';
 		}
